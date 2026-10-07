@@ -1,0 +1,52 @@
+services:
+  projects-web:
+    build: ./web
+    container_name: projects-web
+    restart: unless-stopped
+    expose:
+      - 80
+    networks:
+      - web
+
+  projects-api:
+    build: ./api
+    container_name: projects-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg2://projects:projects@projects-db/projects
+      SECRET_KEY: ${SECRET_KEY}
+      UPLOAD_DIR: /data/uploads
+      MAX_UPLOAD_SIZE: "104857600"
+    volumes:
+      - uploads:/data/uploads
+    depends_on:
+      projects-db:
+        condition: service_healthy
+    networks:
+      - web
+
+  projects-db:
+    image: postgres:17-alpine
+    container_name: projects-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: projects
+      POSTGRES_PASSWORD: projects
+      POSTGRES_DB: projects
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U projects -d projects"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - web
+
+volumes:
+  pgdata:
+  uploads:
+
+networks:
+  web:
+    external: true

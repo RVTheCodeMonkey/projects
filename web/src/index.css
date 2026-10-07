@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-white text-slate-900;
+}
+
+/* Match planner's vibrant green accent */
+.accent-dot {
+  color: #39ff14;
+}
+
+/* Custom scrollbar for tables */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Timeline: hide the vertical scrollbar in WebKit; horizontal stays styled by the rules above. */
+.timeline-scroll::-webkit-scrollbar {
+  width: 0;
+  height: 8px;
+}
+
