@@ -543,10 +543,25 @@ def add_member(
 
     target = db.query(User).filter(User.email == payload.email).first()
     if not target:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found. Send an invite link instead.",
+        # User does not exist yet — create an invite link instead.
+        token = secrets.token_urlsafe(32)
+        expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+        invite = ProjectInvite(
+            project_id=project_id,
+            token=token,
+            role=payload.role,
+            created_by=current_user.id,
+            expires_at=expires_at,
         )
+        db.add(invite)
+        db.commit()
+        return {
+            "token": token,
+            "role": payload.role,
+            "expires_at": expires_at.isoformat(),
+            "link": f"/invite/{token}",
+            "message": "User not found. Invite link created instead.",
+        }
 
     existing = get_project_member(db, project_id, target.id)
     if existing:

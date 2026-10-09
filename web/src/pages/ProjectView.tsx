@@ -246,9 +246,14 @@ export default function ProjectView() {
     e.preventDefault();
     if (!project || !addEmail) return;
     try {
-      await api.post(`/projects/${project.id}/members`, { email: addEmail, role: addRole });
+      const { data } = await api.post(`/projects/${project.id}/members`, { email: addEmail, role: addRole });
       setAddEmail('');
-      await fetchProject();
+      if (data.link) {
+        setInviteLink(`${window.location.origin}${data.link}`);
+        alert(data.message || 'User not found. Invite link created instead.');
+      } else {
+        await fetchProject();
+      }
     } catch (err: any) {
       alert(err.response?.data?.detail || 'Failed to add member');
     }
@@ -471,7 +476,7 @@ export default function ProjectView() {
                 </div>
 
                 <form onSubmit={handleAddMember}>
-                  <h3 className="mb-2 text-sm font-semibold text-slate-900">Add member by email</h3>
+                  <h3 className="mb-2 text-sm font-semibold text-slate-900">Add or invite member by email</h3>
                   <div className="flex gap-2">
                     <input
                       type="email"
