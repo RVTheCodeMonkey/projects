@@ -32,37 +32,35 @@ def _get_server_cls(port: int):
     return smtplib.SMTP
 
 
-def send_project_invite_email(
+def _send_link_email(
     to_email: str,
-    project_name: str,
-    token: str,
-    role: str,
-    request: Optional[Request] = None,
-    base_url: Optional[str] = None,
+    subject: str,
+    link: str,
+    intro_text: str,
+    intro_html: str,
+    action_text: str,
+    expiry_text: str,
 ) -> None:
-    base_url = (base_url or _build_base_url(request) or "https://projects.corebase.be").rstrip("/")
-    link = f"{base_url}/invite/{token}"
-    subject = f"You have been invited to {project_name}"
     text = f"""Hi,
 
-You have been invited to join the project "{project_name}" as a {role}.
+{intro_text}
 
-Please register using this email address ({to_email}) and set your password here:
+{action_text}:
 
 {link}
 
-This invitation link expires in 7 days.
+{expiry_text}
 """
     html = f"""<p>Hi,</p>
-<p>You have been invited to join the project <strong>{project_name}</strong> as a <strong>{role}</strong>.</p>
-<p>Please register using this email address ({to_email}) and set your password using the link below:</p>
+<p>{intro_html}</p>
+<p>{action_text} using the link below:</p>
 <p><a href="{link}">{link}</a></p>
-<p>This invitation link expires in 7 days.</p>
+<p>{expiry_text}</p>
 """
 
     if not is_email_configured():
         logger.info(
-            "[DEV] Invitation email would be sent.\n"
+            "[DEV] Email would be sent.\n"
             f"To: {to_email}\n"
             f"Subject: {subject}\n"
             f"Link: {link}\n"
@@ -89,5 +87,45 @@ This invitation link expires in 7 days.
             server.login(user, password)
             server.send_message(msg)
     except Exception as exc:
-        logger.exception("Failed to send invitation email to %s: %s", to_email, exc)
+        logger.exception("Failed to send email to %s: %s", to_email, exc)
         raise
+
+
+def send_project_invite_email(
+    to_email: str,
+    project_name: str,
+    token: str,
+    role: str,
+    request: Optional[Request] = None,
+    base_url: Optional[str] = None,
+) -> None:
+    base_url = (base_url or _build_base_url(request) or "https://projects.corebase.be").rstrip("/")
+    link = f"{base_url}/invite/{token}"
+    _send_link_email(
+        to_email=to_email,
+        subject=f"You have been invited to {project_name}",
+        link=link,
+        intro_text=f"You have been invited to join the project \"{project_name}\" as a {role}.",
+        intro_html=f"You have been invited to join the project <strong>{project_name}</strong> as a <strong>{role}</strong>.",
+        action_text="Please register using this email address and set your password",
+        expiry_text="This invitation link expires in 7 days.",
+    )
+
+
+def send_password_set_email(
+    to_email: str,
+    token: str,
+    request: Optional[Request] = None,
+    base_url: Optional[str] = None,
+) -> None:
+    base_url = (base_url or _build_base_url(request) or "https://projects.corebase.be").rstrip("/")
+    link = f"{base_url}/set-password?token={token}"
+    _send_link_email(
+        to_email=to_email,
+        subject="Set your CoreBase Projects password",
+        link=link,
+        intro_text="A CoreBase Projects account has been created for you.",
+        intro_html="A CoreBase Projects account has been created for you.",
+        action_text="Please set your password using the link below",
+        expiry_text="This link expires in 7 days.",
+    )

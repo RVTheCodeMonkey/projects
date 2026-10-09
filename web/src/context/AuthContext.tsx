@@ -4,6 +4,7 @@ import api from '../api';
 interface User {
   id: number;
   email: string;
+  is_admin: boolean;
 }
 
 interface AuthContextType {

@@ -1,6 +1,17 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+function NavLink({ to, children }: { to: string; children: React.ReactNode }) {
+  return (
+    <Link
+      to={to}
+      className="text-sm font-medium text-slate-300 transition-colors hover:text-white"
+    >
+      {children}
+    </Link>
+  );
+}
+
 export default function Navbar() {
   const { user, logout } = useAuth();
 
@@ -12,7 +23,11 @@ export default function Navbar() {
         <span className="font-light text-slate-300">base</span>
         <span className="ml-2 text-sm font-normal text-slate-400">Projects</span>
       </Link>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-4">
+        <div className="hidden items-center gap-4 sm:flex">
+          <NavLink to="/">Projects</NavLink>
+          {user?.is_admin && <NavLink to="/admin/users">Admin</NavLink>}
+        </div>
         <span className="hidden text-sm text-slate-400 sm:inline">{user?.email}</span>
         <button
           onClick={logout}

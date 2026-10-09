@@ -6,6 +6,8 @@ import Dashboard from './pages/Dashboard';
 import ProjectView from './pages/ProjectView';
 import InviteAccept from './pages/InviteAccept';
 import PublicProjectView from './pages/PublicProjectView';
+import AdminUsers from './pages/AdminUsers';
+import SetPassword from './pages/SetPassword';
 import Navbar from './components/Navbar';
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
           <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} />
           <Route path="/" element={user ? <Dashboard /> : <Navigate to="/login" />} />
           <Route path="/projects/:id" element={user ? <ProjectView /> : <Navigate to="/login" />} />
+          <Route path="/admin/users" element={user?.is_admin ? <AdminUsers /> : <Navigate to="/" />} />
+          <Route path="/set-password" element={<SetPassword />} />
           <Route path="/invite/:token" element={<InviteAccept />} />
           <Route path="/public/:token" element={<PublicProjectView />} />
         </Routes>
