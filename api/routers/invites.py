@@ -25,6 +25,7 @@ def get_invite_info(
         "project_id": project.id,
         "project_name": project.name,
         "role": invite.role,
+        "invited_email": invite.invited_email,
         "expires_at": invite.expires_at.isoformat() if invite.expires_at else None,
     }
 
@@ -37,6 +38,12 @@ def accept_invite(
     current_user=Depends(get_current_active_user),
 ):
     invite = get_invite(db, token)
+
+    if invite.invited_email and current_user.email != invite.invited_email:
+        raise HTTPException(
+            status_code=403,
+            detail="This invite is tied to a different email address. Please sign in or register with the invited email.",
+        )
 
     existing = (
         db.query(ProjectMember)

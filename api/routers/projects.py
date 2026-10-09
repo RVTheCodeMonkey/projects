@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status, UploadFile, File, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import exists, or_
@@ -26,6 +26,7 @@ from permissions import (
     ROLE_RANK,
 )
 from services import mpxj_service, xml_writer
+from services.email import _build_base_url, send_project_invite_email
 
 router = APIRouter(prefix="/api/projects", tags=["projects"])
 settings = get_settings()
@@ -66,10 +67,6 @@ class MemberAddRequest(BaseModel):
 
 
 class RoleUpdateRequest(BaseModel):
-    role: str
-
-
-class InviteCreateRequest(BaseModel):
     role: str
 
 
@@ -528,6 +525,8 @@ def list_members(
 def add_member(
     project_id: int,
     payload: MemberAddRequest,
+    request: Request,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_active_user),
     project_member=Depends(require_project_role("editor")),
@@ -541,26 +540,43 @@ def add_member(
     if payload.role not in allowed_roles:
         raise HTTPException(status_code=400, detail="Invalid role")
 
+    project = db.query(Project).filter(Project.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
     target = db.query(User).filter(User.email == payload.email).first()
     if not target:
-        # User does not exist yet — create an invite link instead.
+        # User does not exist yet — create an email-locked invite and send it.
         token = secrets.token_urlsafe(32)
         expires_at = datetime.now(timezone.utc) + timedelta(days=7)
         invite = ProjectInvite(
             project_id=project_id,
             token=token,
             role=payload.role,
+            invited_email=payload.email,
             created_by=current_user.id,
             expires_at=expires_at,
         )
         db.add(invite)
         db.commit()
+
+        base_url = _build_base_url(request)
+        background_tasks.add_task(
+            send_project_invite_email,
+            payload.email,
+            project.name,
+            token,
+            payload.role,
+            base_url=base_url,
+        )
+
         return {
             "token": token,
             "role": payload.role,
             "expires_at": expires_at.isoformat(),
             "link": f"/invite/{token}",
-            "message": "User not found. Invite link created instead.",
+            "email_sent": True,
+            "message": "User not found. Invite link created and emailed instead.",
         }
 
     existing = get_project_member(db, project_id, target.id)
@@ -644,43 +660,6 @@ def update_member_role(
     target.role = payload.role
     db.commit()
     return {"user_id": target.user_id, "role": target.role}
-
-
-@router.post("/{project_id}/invites")
-def create_invite(
-    project_id: int,
-    payload: InviteCreateRequest,
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_active_user),
-    project_member=Depends(require_project_role("editor")),
-):
-    allowed_roles = {"editor", "viewer"}
-    if payload.role == "owner":
-        if project_member.role != "owner":
-            raise HTTPException(status_code=403, detail="Only owners can create owner invites")
-        allowed_roles.add("owner")
-
-    if payload.role not in allowed_roles:
-        raise HTTPException(status_code=400, detail="Invalid role")
-
-    token = secrets.token_urlsafe(32)
-    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
-    invite = ProjectInvite(
-        project_id=project_id,
-        token=token,
-        role=payload.role,
-        created_by=current_user.id,
-        expires_at=expires_at,
-    )
-    db.add(invite)
-    db.commit()
-
-    return {
-        "token": token,
-        "role": payload.role,
-        "expires_at": expires_at.isoformat(),
-        "link": f"/invite/{token}",
-    }
 
 
 @router.post("/{project_id}/public")

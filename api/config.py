@@ -1,5 +1,6 @@
 import os
 from functools import lru_cache
+from typing import Optional
 
 
 class Settings:
@@ -22,6 +23,14 @@ class Settings:
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "10080"))
     UPLOAD_DIR: str = os.getenv("UPLOAD_DIR", "/data/uploads")
     MAX_UPLOAD_SIZE: int = int(os.getenv("MAX_UPLOAD_SIZE", "104857600"))
+
+    # SMTP / email
+    SMTP_HOST: Optional[str] = os.getenv("SMTP_HOST")
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT") or 587)
+    SMTP_USER: Optional[str] = os.getenv("SMTP_USER")
+    SMTP_PASS: Optional[str] = os.getenv("SMTP_PASS")
+    SMTP_FROM: Optional[str] = os.getenv("SMTP_FROM")
+    APP_BASE_URL: Optional[str] = os.getenv("APP_BASE_URL")
 
 
 @lru_cache

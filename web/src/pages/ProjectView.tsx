@@ -59,9 +59,9 @@ export default function ProjectView() {
   const [uploadingVersion, setUploadingVersion] = useState(false);
   const [showMembers, setShowMembers] = useState(false);
   const [inviteLink, setInviteLink] = useState('');
-  const [inviteRole, setInviteRole] = useState<'editor' | 'viewer'>('viewer');
   const [addEmail, setAddEmail] = useState('');
   const [addRole, setAddRole] = useState<'owner' | 'editor' | 'viewer'>('viewer');
+  const [emailSentTo, setEmailSentTo] = useState('');
   const versionInputRef = useRef<HTMLInputElement>(null);
 
   const fetchProject = async () => {
@@ -232,26 +232,19 @@ export default function ProjectView() {
     setTasks((prev) => [...prev, newTask]);
   };
 
-  const handleCreateInvite = async () => {
-    if (!project) return;
-    try {
-      const { data } = await api.post(`/projects/${project.id}/invites`, { role: inviteRole });
-      setInviteLink(`${window.location.origin}${data.link}`);
-    } catch (err) {
-      alert('Failed to create invite');
-    }
-  };
-
   const handleAddMember = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!project || !addEmail) return;
+    const email = addEmail;
     try {
-      const { data } = await api.post(`/projects/${project.id}/members`, { email: addEmail, role: addRole });
+      const { data } = await api.post(`/projects/${project.id}/members`, { email, role: addRole });
       setAddEmail('');
+      setEmailSentTo('');
       if (data.link) {
         setInviteLink(`${window.location.origin}${data.link}`);
-        alert(data.message || 'User not found. Invite link created instead.');
+        setEmailSentTo(email);
       } else {
+        setInviteLink('');
         await fetchProject();
       }
     } catch (err: any) {
@@ -442,68 +435,51 @@ export default function ProjectView() {
             </div>
 
             {canEdit && (
-              <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                  <h3 className="mb-2 text-sm font-semibold text-slate-900">Invite by link</h3>
-                  <div className="flex gap-2">
-                    <select
-                      value={inviteRole}
-                      onChange={(e) => setInviteRole(e.target.value as 'editor' | 'viewer')}
-                      className="rounded-lg border border-slate-300 px-2 py-2 text-sm"
-                    >
-                      <option value="viewer">Viewer</option>
-                      <option value="editor">Editor</option>
-                      {isOwner && <option value="owner">Owner</option>}
-                    </select>
-                    <button
-                      onClick={handleCreateInvite}
-                      className="rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white hover:bg-green-700"
-                    >
-                      Create link
-                    </button>
-                  </div>
-                  {inviteLink && (
-                    <div className="mt-2 text-sm text-slate-600">
-                      <code className="break-all rounded bg-slate-100 px-2 py-1">{inviteLink}</code>
-                      <button
-                        onClick={() => navigator.clipboard.writeText(inviteLink)}
-                        className="ml-2 text-green-600 hover:underline"
-                      >
-                        Copy
-                      </button>
-                    </div>
-                  )}
+              <form onSubmit={handleAddMember} className="mb-6">
+                <h3 className="mb-2 text-sm font-semibold text-slate-900">Add or invite member by email</h3>
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    required
+                    value={addEmail}
+                    onChange={(e) => setAddEmail(e.target.value)}
+                    placeholder="user@example.com"
+                    className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
+                  />
+                  <select
+                    value={addRole}
+                    onChange={(e) => setAddRole(e.target.value as 'owner' | 'editor' | 'viewer')}
+                    className="rounded-lg border border-slate-300 px-2 py-2 text-sm"
+                  >
+                    <option value="viewer">Viewer</option>
+                    <option value="editor">Editor</option>
+                    {isOwner && <option value="owner">Owner</option>}
+                  </select>
+                  <button
+                    type="submit"
+                    className="rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white hover:bg-green-700"
+                  >
+                    Add
+                  </button>
                 </div>
-
-                <form onSubmit={handleAddMember}>
-                  <h3 className="mb-2 text-sm font-semibold text-slate-900">Add or invite member by email</h3>
-                  <div className="flex gap-2">
-                    <input
-                      type="email"
-                      required
-                      value={addEmail}
-                      onChange={(e) => setAddEmail(e.target.value)}
-                      placeholder="user@example.com"
-                      className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
-                    />
-                    <select
-                      value={addRole}
-                      onChange={(e) => setAddRole(e.target.value as 'owner' | 'editor' | 'viewer')}
-                      className="rounded-lg border border-slate-300 px-2 py-2 text-sm"
-                    >
-                      <option value="viewer">Viewer</option>
-                      <option value="editor">Editor</option>
-                      {isOwner && <option value="owner">Owner</option>}
-                    </select>
+                {emailSentTo && (
+                  <p className="mt-2 text-sm text-green-700">
+                    An invitation email has been sent to {emailSentTo}.
+                  </p>
+                )}
+                {inviteLink && (
+                  <div className="mt-2 text-sm text-slate-600">
+                    Fallback link:{" "}
+                    <code className="break-all rounded bg-slate-100 px-2 py-1">{inviteLink}</code>
                     <button
-                      type="submit"
-                      className="rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white hover:bg-green-700"
+                      onClick={() => navigator.clipboard.writeText(inviteLink)}
+                      className="ml-2 text-green-600 hover:underline"
                     >
-                      Add
+                      Copy
                     </button>
                   </div>
-                </form>
-              </div>
+                )}
+              </form>
             )}
 
             <h3 className="mb-2 text-sm font-semibold text-slate-900">Members</h3>

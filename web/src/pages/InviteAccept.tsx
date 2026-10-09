@@ -7,6 +7,7 @@ interface InviteInfo {
   project_id: number;
   project_name: string;
   role: string;
+  invited_email?: string;
 }
 
 export default function InviteAccept() {
@@ -68,7 +69,13 @@ export default function InviteAccept() {
 
       {!user ? (
         <div className="mt-6 space-y-3">
-          <p className="text-sm text-slate-500">Sign in or create an account to accept.</p>
+          {info?.invited_email ? (
+            <p className="text-sm text-slate-500">
+              Please sign in or register with <strong>{info.invited_email}</strong> to accept this invitation.
+            </p>
+          ) : (
+            <p className="text-sm text-slate-500">Sign in or create an account to accept.</p>
+          )}
           <div className="flex justify-center gap-3">
             <Link
               to={`/login?redirect=/invite/${token}`}
@@ -77,7 +84,7 @@ export default function InviteAccept() {
               Sign in
             </Link>
             <Link
-              to={`/register?redirect=/invite/${token}`}
+              to={`/register?redirect=/invite/${token}${info?.invited_email ? `&email=${encodeURIComponent(info.invited_email)}` : ""}`}
               className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
             >
               Register
