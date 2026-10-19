@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models import PasswordResetToken, User
 from auth import get_password_hash, verify_password, create_access_token, get_current_active_user
-from schemas import UserRegister, UserLogin, UserResponse
+from schemas import ChangePasswordRequest, UserRegister, UserLogin, UserResponse
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -107,3 +107,20 @@ def set_password_with_token(
     reset.used_at = datetime.now(timezone.utc)
     db.commit()
     return {"status": "password_set"}
+
+
+@router.post("/change-password")
+def change_password(
+    payload: ChangePasswordRequest,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    if not verify_password(payload.current_password, current_user.hashed_password):
+        raise HTTPException(status_code=401, detail="Current password is incorrect")
+
+    if len(payload.new_password) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
+
+    current_user.hashed_password = get_password_hash(payload.new_password)
+    db.commit()
+    return {"status": "password_changed"}

@@ -32,3 +32,8 @@ class UserUpdateAdmin(BaseModel):
 class PasswordResetTokenResponse(BaseModel):
     email: str
     expires_at: str | None
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str

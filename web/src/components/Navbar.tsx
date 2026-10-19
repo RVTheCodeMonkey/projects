@@ -29,6 +29,12 @@ export default function Navbar() {
           {user?.is_admin && <NavLink to="/admin/users">Admin</NavLink>}
         </div>
         <span className="hidden text-sm text-slate-400 sm:inline">{user?.email}</span>
+        <Link
+          to="/change-password"
+          className="hidden text-sm font-medium text-slate-300 transition-colors hover:text-white sm:inline"
+        >
+          Change password
+        </Link>
         <button
           onClick={logout}
           className="rounded-lg border border-slate-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-slate-700 active:bg-slate-800"

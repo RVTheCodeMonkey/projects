@@ -21,6 +21,8 @@ export default function AdminUsers() {
   const [actionError, setActionError] = useState('');
   const [actionMessage, setActionMessage] = useState('');
 
+  const [resetLink, setResetLink] = useState<{ email: string; link: string } | null>(null);
+
   const fetchUsers = async () => {
     try {
       const { data } = await api.get('/users');
@@ -72,9 +74,13 @@ export default function AdminUsers() {
 
   const handleSendPasswordLink = async (user: AdminUser) => {
     setActionError('');
+    setResetLink(null);
     try {
-      await api.post(`/users/${user.id}/send-password-link`);
+      const { data } = await api.post(`/users/${user.id}/send-password-link`);
       showMessage(`Password link sent to ${user.email}.`);
+      if (data.link) {
+        setResetLink({ email: user.email, link: data.link });
+      }
     } catch (err: any) {
       setActionError(err.response?.data?.detail || 'Failed to send password link');
     }
@@ -117,6 +123,29 @@ export default function AdminUsers() {
       {error && <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
       {actionError && <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{actionError}</p>}
       {actionMessage && <p className="mb-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">{actionMessage}</p>}
+
+      {resetLink && (
+        <div className="mb-6 rounded-2xl bg-blue-50 p-4 ring-1 ring-blue-200">
+          <h2 className="mb-2 text-sm font-semibold text-blue-900">Copy reset link</h2>
+          <p className="mb-2 text-sm text-blue-800">
+            If the email to <strong>{resetLink.email}</strong> does not arrive, share this link directly:
+          </p>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              readOnly
+              value={resetLink.link}
+              className="flex-1 rounded-lg border border-blue-200 bg-white px-3 py-2 text-xs text-slate-700 focus:outline-none"
+            />
+            <button
+              onClick={() => navigator.clipboard.writeText(resetLink.link)}
+              className="rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700"
+            >
+              Copy
+            </button>
+          </div>
+        </div>
+      )}
 
       {showAdd && (
         <form onSubmit={handleCreate} className="mb-6 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">

@@ -160,10 +160,11 @@ def send_password_link(
 
     token = _create_password_set_token(db, user)
     base_url = _build_base_url(request)
+    link = f"{base_url}/set-password?token={token}"
     background_tasks.add_task(
         send_password_set_email,
         user.email,
         token,
         base_url=base_url,
     )
-    return {"status": "email_sent"}
+    return {"status": "email_sent", "email": user.email, "link": link}
