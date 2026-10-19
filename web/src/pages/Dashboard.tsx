@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
+import { useAuth } from '../context/AuthContext';
 
 interface Project {
   id: number;
@@ -13,21 +14,26 @@ interface Project {
   is_public: boolean;
   public_token: string | null;
   role?: string;
+  owner_email?: string;
 }
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createName, setCreateName] = useState('New project');
   const [creating, setCreating] = useState(false);
+  const [view, setView] = useState<'mine' | 'all'>(user?.is_admin ? 'mine' : 'mine');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   const fetchProjects = async () => {
+    setLoading(true);
     try {
-      const { data } = await api.get('/projects');
+      const endpoint = user?.is_admin && view === 'all' ? '/projects/all' : '/projects';
+      const { data } = await api.get(endpoint);
       setProjects(data);
     } finally {
       setLoading(false);
@@ -36,7 +42,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [view]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -74,6 +80,18 @@ export default function Dashboard() {
     }
   };
 
+  const handleDelete = async (project: Project) => {
+    if (!window.confirm(`Delete project "${project.name}"? This cannot be undone.`)) {
+      return;
+    }
+    try {
+      await api.delete(`/projects/${project.id}`);
+      await fetchProjects();
+    } catch (err) {
+      alert('Failed to delete project');
+    }
+  };
+
   const formatSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -97,10 +115,38 @@ export default function Dashboard() {
     <div className="py-6">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">My Projects</h1>
+          <h1 className="text-2xl font-bold text-slate-900">
+            {user?.is_admin && view === 'all' ? 'All Projects' : 'My Projects'}
+          </h1>
           <p className="text-sm text-slate-500">Upload and manage Microsoft Project files</p>
         </div>
         <div className="flex items-center gap-2">
+          {user?.is_admin && (
+            <div className="mr-2 inline-flex rounded-lg bg-slate-100 p-1">
+              <button
+                type="button"
+                onClick={() => setView('mine')}
+                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                  view === 'mine'
+                    ? 'bg-white text-slate-900 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                My projects
+              </button>
+              <button
+                type="button"
+                onClick={() => setView('all')}
+                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                  view === 'all'
+                    ? 'bg-white text-slate-900 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                All projects
+              </button>
+            </div>
+          )}
           <button
             type="button"
             onClick={() => setShowCreateModal(true)}
@@ -140,11 +186,17 @@ export default function Dashboard() {
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Name</th>
+                {user?.is_admin && view === 'all' && (
+                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Owner</th>
+                )}
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Original file</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Format</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Size</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Role</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Uploaded</th>
+                {user?.is_admin && view === 'all' && (
+                  <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -158,6 +210,9 @@ export default function Dashboard() {
                       {project.name}
                     </Link>
                   </td>
+                  {user?.is_admin && view === 'all' && (
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700">{project.owner_email}</td>
+                  )}
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700">{project.original_filename}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700">{project.file_format}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700">{formatSize(project.file_size)}</td>
@@ -174,6 +229,16 @@ export default function Dashboard() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                     {new Date(project.created_at).toLocaleString()}
                   </td>
+                  {user?.is_admin && view === 'all' && (
+                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                      <button
+                        onClick={() => handleDelete(project)}
+                        className="rounded-lg bg-red-50 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-100"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

@@ -184,6 +184,27 @@ def list_projects(
     return result
 
 
+@router.get("/all")
+def list_all_projects(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_active_user),
+):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    projects = db.query(Project).order_by(Project.created_at.desc()).all()
+    owners = {u.id: u.email for u in db.query(User).all()}
+
+    result = []
+    for p in projects:
+        serialized = _serialize_project(p, role="owner")
+        serialized["owner_id"] = p.owner_id
+        serialized["owner_email"] = owners.get(p.owner_id, "Unknown")
+        result.append(serialized)
+    return result
+
+
 @router.post("")
 def upload_project(
     request: Request,

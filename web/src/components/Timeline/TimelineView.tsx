@@ -205,8 +205,8 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
                       key={`w-${i}`}
                       className={`flex shrink-0 items-center justify-center border-b text-xs font-bold ${
                         showWeek
-                          ? 'border-l border-slate-400 text-[#ffff00]'
-                          : 'border-slate-300 text-amber-400'
+                          ? 'border-l border-slate-400 text-slate-700'
+                          : 'border-slate-300 text-slate-700'
                       }`}
                       style={{ width: DAY_LABEL_WIDTH, height: 16 }}
                     >

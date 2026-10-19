@@ -39,13 +39,22 @@ def get_project_member(
 
 
 def require_project_role(min_role: str):
-    """Return the member row if the current user has at least min_role on the project."""
+    """Return the member row if the current user has at least min_role on the project.
+
+    Admins are treated as owners for every project.
+    """
 
     def _dependency(
         project_id: int,
         current_user: User = Depends(get_current_active_user),
         db: Session = Depends(get_db),
     ) -> ProjectMember:
+        if current_user.is_admin:
+            project = db.query(Project).filter(Project.id == project_id).first()
+            if not project:
+                raise HTTPException(status_code=404, detail="Project not found")
+            return ProjectMember(project_id=project_id, user_id=current_user.id, role="owner")
+
         member = get_project_member(db, project_id, current_user.id)
         if not member or _rank(member.role) < _rank(min_role):
             raise HTTPException(status_code=404, detail="Project not found")
@@ -55,18 +64,25 @@ def require_project_role(min_role: str):
 
 
 def get_project_with_role(min_role: str):
-    """Return (project, member) if the user has at least min_role."""
+    """Return (project, member) if the user has at least min_role.
+
+    Admins are treated as owners for every project.
+    """
 
     def _dependency(
         project_id: int,
         current_user: User = Depends(get_current_active_user),
         db: Session = Depends(get_db),
     ) -> Tuple[Project, ProjectMember]:
-        member = get_project_member(db, project_id, current_user.id)
-        if not member or _rank(member.role) < _rank(min_role):
-            raise HTTPException(status_code=404, detail="Project not found")
         project = db.query(Project).filter(Project.id == project_id).first()
         if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+
+        if current_user.is_admin:
+            return project, ProjectMember(project_id=project_id, user_id=current_user.id, role="owner")
+
+        member = get_project_member(db, project_id, current_user.id)
+        if not member or _rank(member.role) < _rank(min_role):
             raise HTTPException(status_code=404, detail="Project not found")
         return project, member
 

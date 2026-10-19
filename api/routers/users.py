@@ -131,6 +131,12 @@ def delete_user(
         {"created_by": admin.id}, synchronize_session=False
     )
 
+    # Delete password-reset tokens linked to this user (FK is CASCADE but SQLAlchemy
+    # needs an explicit delete to avoid trying to nullify the user_id).
+    db.query(PasswordResetToken).filter(PasswordResetToken.user_id == target.id).delete(
+        synchronize_session=False
+    )
+
     # Transfer project ownership to the admin performing the deletion
     owned_projects = db.query(Project).filter(Project.owner_id == target.id).all()
     for project in owned_projects:
