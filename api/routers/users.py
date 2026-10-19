@@ -26,6 +26,15 @@ def _serialize_user(user: User) -> Dict[str, Any]:
 
 
 def _create_password_set_token(db: Session, user: User) -> str:
+    # Invalidate any previous unused tokens so the latest email is the only working link
+    db.query(PasswordResetToken).filter(
+        PasswordResetToken.user_id == user.id,
+        PasswordResetToken.used_at.is_(None),
+    ).update(
+        {"used_at": datetime.now(timezone.utc)},
+        synchronize_session=False,
+    )
+
     token = secrets.token_urlsafe(32)
     expires_at = datetime.now(timezone.utc) + timedelta(days=TOKEN_VALIDITY_DAYS)
     db.add(
