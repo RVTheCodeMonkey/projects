@@ -102,7 +102,7 @@ export function TimelineRow({ label, tasks, dayHeaders, weekStarts, onTaskClick,
 
   return (
     <div className="flex border-b border-slate-200">
-      <div className="sticky left-0 z-10 flex w-40 shrink-0 items-center justify-between bg-slate-100 px-3 py-2">
+      <div className="sticky left-0 z-10 flex w-56 shrink-0 items-center justify-between bg-slate-100 px-3 py-2">
         {isEditingName ? (
           <input
             autoFocus

@@ -166,7 +166,7 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
         <div style={{ width: totalWidth }}>
           {/* Month headers */}
           <div className="sticky top-0 z-20 flex bg-white">
-            <div className="sticky left-0 z-10 w-40 shrink-0 bg-slate-100" />
+            <div className="sticky left-0 z-10 w-56 shrink-0 bg-slate-100" />
             <div className="relative flex" style={{ width: totalWidth }}>
               {(() => {
                 let lastMonth = -1;
@@ -192,7 +192,7 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
 
           {/* Week number */}
           <div className="sticky top-[18px] z-20 flex bg-white">
-            <div className="sticky left-0 z-10 w-40 shrink-0 bg-slate-100" />
+            <div className="sticky left-0 z-10 w-56 shrink-0 bg-slate-100" />
             <div className="flex" style={{ width: totalWidth }}>
               {(() => {
                 let lastWeek = -1;
@@ -220,7 +220,7 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
 
           {/* Day-of-week + day number */}
           <div className="sticky top-[34px] z-20 flex bg-white">
-            <div className="sticky left-0 z-10 w-40 shrink-0 bg-slate-100" />
+            <div className="sticky left-0 z-10 w-56 shrink-0 bg-slate-100" />
             <div className="flex" style={{ width: totalWidth }}>
               {dayHeaders.map((d, i) => {
                 const today = isToday(d);
