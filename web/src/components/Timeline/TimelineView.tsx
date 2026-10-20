@@ -2,8 +2,8 @@ import { useEffect, useRef, useMemo } from 'react';
 import type { Task } from '../../pages/ProjectView';
 import { TimelineRow } from './TimelineRow';
 import { useDragScroll } from '../../hooks/useDragScroll';
+import { DAY_LABEL_WIDTH } from './constants';
 
-const DAY_LABEL_WIDTH = 56;
 const PADDING_DAYS = 2;
 
 function parseDate(iso: string) {

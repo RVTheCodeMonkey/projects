@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import type { Task } from '../../pages/ProjectView';
 import { TaskCard } from './TaskCard';
-
-const DAY_LABEL_WIDTH = 56;
+import { DAY_LABEL_WIDTH } from './constants';
 
 function isToday(d: Date) {
   const now = new Date();

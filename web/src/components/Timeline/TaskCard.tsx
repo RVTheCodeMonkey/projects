@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Task } from '../../pages/ProjectView';
+import { DAY_LABEL_WIDTH } from './constants';
 
-const DAY_LABEL_WIDTH = 56;
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 function dateKey(iso: string) {
