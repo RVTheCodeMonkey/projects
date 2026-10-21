@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Task } from '../../pages/ProjectView';
-import { DAY_LABEL_WIDTH } from './constants';
+import { DAY_LABEL_WIDTH, TASK_CARD_MIN_HEIGHT, TASK_CARD_TOP_PADDING } from './constants';
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -83,8 +83,8 @@ export function TaskCard({ task, dayHeaders, topOffset = 0, onClick }: TaskCardP
         style={{
           left,
           width,
-          top: 4 + topOffset,
-          minHeight: 50,
+          top: TASK_CARD_TOP_PADDING + topOffset,
+          minHeight: TASK_CARD_MIN_HEIGHT,
           backgroundColor: barColor,
           borderLeftColor: 'rgba(0,0,0,0.2)',
         }}
@@ -111,8 +111,8 @@ export function TaskCard({ task, dayHeaders, topOffset = 0, onClick }: TaskCardP
       style={{
         left,
         width,
-        top: 4 + topOffset,
-        minHeight: 50,
+        top: TASK_CARD_TOP_PADDING + topOffset,
+        minHeight: TASK_CARD_MIN_HEIGHT,
         backgroundColor: barColor,
         borderLeftColor: 'rgba(0,0,0,0.2)',
       }}

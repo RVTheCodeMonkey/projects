@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Task } from '../../pages/ProjectView';
 import { TaskCard } from './TaskCard';
-import { DAY_LABEL_WIDTH } from './constants';
+import { DAY_LABEL_WIDTH, ROW_BASE_HEIGHT, TASK_LEVEL_OFFSET } from './constants';
 
 function isToday(d: Date) {
   const now = new Date();
@@ -161,7 +161,7 @@ export function TimelineRow({ label, tasks, dayHeaders, weekStarts, onTaskClick,
         ))}
 
         {/* Task cards */}
-        <div className="relative px-3 py-2" style={{ minHeight: 80 + maxLevel * 26 }}>
+        <div className="relative px-3 py-2" style={{ minHeight: ROW_BASE_HEIGHT + maxLevel * TASK_LEVEL_OFFSET }}>
           {[...tasks]
             .sort((a, b) => {
               const da = a.finish.localeCompare(a.start);
@@ -173,7 +173,7 @@ export function TimelineRow({ label, tasks, dayHeaders, weekStarts, onTaskClick,
                 key={task.uid}
                 task={task}
                 dayHeaders={dayHeaders}
-                topOffset={taskLevel.get(task.uid)! * 26}
+                topOffset={taskLevel.get(task.uid)! * TASK_LEVEL_OFFSET}
                 onClick={() => onTaskClick(task)}
               />
             ))}
