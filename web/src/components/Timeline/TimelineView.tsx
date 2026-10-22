@@ -60,7 +60,7 @@ function getResponsiveDayWidth() {
 }
 
 function getLabelClass(dayWidth: number) {
-  if (dayWidth <= 40) return 'w-32';
+  if (dayWidth <= 40) return 'w-40';
   if (dayWidth <= 56) return 'w-44';
   return 'w-56';
 }

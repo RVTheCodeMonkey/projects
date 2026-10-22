@@ -125,16 +125,16 @@ export function TimelineRow({
             className="min-w-0 flex-1 rounded border border-slate-300 px-1.5 py-1 text-base sm:text-sm focus:border-green-600 focus:outline-none"
           />
         ) : (
-          <span className="truncate text-xs font-semibold text-slate-700 sm:text-sm">{label}</span>
+          <span title={label} className="truncate text-xs font-semibold text-slate-700 sm:text-sm">{label}</span>
         )}
         <div className="flex shrink-0 items-center">
             {canRename && !isEditingName && (
             <button
               onClick={startRename}
               title="Rename row"
-              className="ml-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-500 hover:bg-slate-200 hover:text-slate-700"
+              className="ml-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-slate-500 hover:bg-slate-200 hover:text-slate-700 sm:h-9 sm:w-9"
             >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -147,7 +147,7 @@ export function TimelineRow({
             <button
               onClick={onAddTask}
               title="Add task to this group"
-              className="ml-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green-600 text-lg text-white hover:bg-green-700"
+              className="ml-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-green-600 text-base text-white hover:bg-green-700 sm:h-9 sm:w-9 sm:text-lg"
             >
               +
             </button>
