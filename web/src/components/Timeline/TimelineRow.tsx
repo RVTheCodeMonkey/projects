@@ -104,25 +104,25 @@ export function TimelineRow({ label, tasks, dayHeaders, weekStarts, onTaskClick,
     <div className="flex border-b border-slate-200">
       <div className="sticky left-0 z-10 flex w-56 shrink-0 items-center justify-between bg-slate-100 px-3 py-2">
         {isEditingName ? (
-          <input
+            <input
             autoFocus
             value={editName}
             onChange={(e) => setEditName(e.target.value)}
             onKeyDown={handleKeyDown}
             onBlur={commitRename}
-            className="min-w-0 flex-1 rounded border border-slate-300 px-1.5 py-1 text-sm focus:border-green-600 focus:outline-none"
+            className="min-w-0 flex-1 rounded border border-slate-300 px-1.5 py-1 text-base sm:text-sm focus:border-green-600 focus:outline-none"
           />
         ) : (
           <span className="truncate text-sm font-semibold text-slate-700">{label}</span>
         )}
         <div className="flex shrink-0 items-center">
-          {canRename && !isEditingName && (
+            {canRename && !isEditingName && (
             <button
               onClick={startRename}
               title="Rename row"
-              className="ml-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-slate-500 hover:bg-slate-200 hover:text-slate-700"
+              className="ml-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-500 hover:bg-slate-200 hover:text-slate-700"
             >
-              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -135,7 +135,7 @@ export function TimelineRow({ label, tasks, dayHeaders, weekStarts, onTaskClick,
             <button
               onClick={onAddTask}
               title="Add task to this group"
-              className="ml-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-600 text-white hover:bg-green-700"
+              className="ml-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green-600 text-lg text-white hover:bg-green-700"
             >
               +
             </button>

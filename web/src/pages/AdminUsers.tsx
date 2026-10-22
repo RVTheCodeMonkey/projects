@@ -110,7 +110,7 @@ export default function AdminUsers() {
 
   return (
     <div className="mx-auto max-w-5xl py-8">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-slate-900">Admin: Users</h1>
         <button
           onClick={() => setShowAdd(true)}
@@ -130,12 +130,12 @@ export default function AdminUsers() {
           <p className="mb-2 text-sm text-blue-800">
             If the email to <strong>{resetLink.email}</strong> does not arrive, share this link directly:
           </p>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <input
               type="text"
               readOnly
               value={resetLink.link}
-              className="flex-1 rounded-lg border border-blue-200 bg-white px-3 py-2 text-xs text-slate-700 focus:outline-none"
+              className="min-w-0 flex-1 rounded-lg border border-blue-200 bg-white px-3 py-2 text-base text-slate-700 focus:outline-none sm:text-xs"
             />
             <button
               onClick={() => navigator.clipboard.writeText(resetLink.link)}
@@ -159,7 +159,7 @@ export default function AdminUsers() {
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
                 placeholder="user@example.com"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
               />
             </div>
             <label className="flex items-center gap-2 text-sm text-slate-700">
@@ -191,7 +191,7 @@ export default function AdminUsers() {
         </form>
       )}
 
-      <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+      <div className="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
         <table className="min-w-full divide-y divide-slate-200">
           <thead className="bg-slate-50">
             <tr>
@@ -216,22 +216,22 @@ export default function AdminUsers() {
                   {u.created_at ? new Date(u.created_at).toLocaleString() : '-'}
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <div className="flex justify-end gap-2">
+                  <div className="flex flex-col justify-end gap-2 sm:flex-row">
                     <button
                       onClick={() => handleToggleAdmin(u)}
-                      className="rounded-lg border border-slate-300 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
+                      className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
                     >
                       {u.is_admin ? 'Remove admin' : 'Make admin'}
                     </button>
                     <button
                       onClick={() => handleSendPasswordLink(u)}
-                      className="rounded-lg border border-slate-300 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
+                      className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
                     >
                       Send password link
                     </button>
                     <button
                       onClick={() => handleDelete(u)}
-                      className="rounded-lg bg-red-50 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-100"
+                      className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-100"
                     >
                       Delete
                     </button>

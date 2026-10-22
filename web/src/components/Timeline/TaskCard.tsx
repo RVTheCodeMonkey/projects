@@ -95,6 +95,9 @@ export function TaskCard({ task, dayHeaders, topOffset = 0, onClick }: TaskCardP
         <span className="text-[11px] opacity-70">
           {formatLabel(task.start)} – {formatLabel(task.finish)}
         </span>
+        <span className="absolute right-1.5 top-1.5 rounded bg-black/40 px-1 text-[10px] text-white">
+          {task.percent_complete}%
+        </span>
         {hover && (
           <div className="absolute left-full z-30 ml-1.5 whitespace-nowrap rounded-md bg-slate-800 px-2.5 py-1.5 text-xs text-white shadow-lg">
             {task.name} — {task.percent_complete}%
@@ -125,6 +128,9 @@ export function TaskCard({ task, dayHeaders, topOffset = 0, onClick }: TaskCardP
       </span>
       <span className="text-[11px] opacity-70">
         {formatLabel(task.start)} – {formatLabel(task.finish)}
+      </span>
+      <span className="absolute right-1.5 top-1.5 rounded bg-black/40 px-1 text-[10px] text-white">
+        {task.percent_complete}%
       </span>
       {/* Progress fill */}
       <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-white/30">

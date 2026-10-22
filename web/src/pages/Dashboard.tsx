@@ -120,7 +120,7 @@ export default function Dashboard() {
           </h1>
           <p className="text-sm text-slate-500">Upload and manage Microsoft Project files</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {user?.is_admin && (
             <div className="mr-2 inline-flex rounded-lg bg-slate-100 p-1">
               <button
@@ -181,7 +181,7 @@ export default function Dashboard() {
           No projects yet. Upload a project file or create a blank project to get started.
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+        <div className="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
           <table className="min-w-full divide-y divide-slate-200">
             <thead className="bg-slate-50">
               <tr>
@@ -233,7 +233,7 @@ export default function Dashboard() {
                     <td className="px-6 py-4 whitespace-nowrap text-right">
                       <button
                         onClick={() => handleDelete(project)}
-                        className="rounded-lg bg-red-50 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-100"
+                        className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-100"
                       >
                         Delete
                       </button>
@@ -248,7 +248,7 @@ export default function Dashboard() {
 
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200">
+          <div className="w-full max-w-sm max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200">
             <h2 className="mb-4 text-lg font-bold text-slate-900">Create new project</h2>
             <form onSubmit={handleCreate}>
               <label className="mb-1 block text-sm font-medium text-slate-700">Project name</label>
@@ -256,7 +256,7 @@ export default function Dashboard() {
                 type="text"
                 value={createName}
                 onChange={(e) => setCreateName(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
                 autoFocus
               />
               <div className="mt-6 flex justify-end gap-2">

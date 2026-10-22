@@ -426,7 +426,7 @@ export default function ProjectView() {
                     href={`/public/${project.public_token}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-green-600 hover:underline"
+                    className="break-all text-green-600 hover:underline"
                   >
                     {window.location.origin}/public/{project.public_token}
                   </a>
@@ -437,19 +437,19 @@ export default function ProjectView() {
             {canEdit && (
               <form onSubmit={handleAddMember} className="mb-6">
                 <h3 className="mb-2 text-sm font-semibold text-slate-900">Add or invite member by email</h3>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <input
                     type="email"
                     required
                     value={addEmail}
                     onChange={(e) => setAddEmail(e.target.value)}
                     placeholder="user@example.com"
-                    className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
+                    className="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
                   />
                   <select
                     value={addRole}
                     onChange={(e) => setAddRole(e.target.value as 'owner' | 'editor' | 'viewer')}
-                    className="rounded-lg border border-slate-300 px-2 py-2 text-sm"
+                    className="rounded-lg border border-slate-300 px-2 py-2 text-base sm:text-sm"
                   >
                     <option value="viewer">Viewer</option>
                     <option value="editor">Editor</option>
@@ -487,12 +487,12 @@ export default function ProjectView() {
               {project.members.map((m) => (
                 <li key={m.user_id} className="flex items-center justify-between py-2">
                   <span className="text-sm text-slate-700">{m.email}</span>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     {isOwner && m.user_id !== project.members.find((x) => x.role === 'owner')?.user_id ? (
                       <select
                         value={m.role}
                         onChange={(e) => handleChangeRole(m.user_id, e.target.value)}
-                        className="rounded-lg border border-slate-300 px-2 py-1 text-sm"
+                        className="rounded-lg border border-slate-300 px-2 py-1 text-base sm:text-sm"
                       >
                         <option value="viewer">Viewer</option>
                         <option value="editor">Editor</option>
@@ -504,7 +504,7 @@ export default function ProjectView() {
                     {isOwner && (
                       <button
                         onClick={() => handleRemoveMember(m.user_id)}
-                        className="text-sm text-red-600 hover:text-red-700"
+                        className="rounded px-2 py-1 text-sm text-red-600 hover:bg-red-50 hover:text-red-700"
                       >
                         Remove
                       </button>
@@ -523,7 +523,7 @@ export default function ProjectView() {
           {canEdit && (
             <button
               onClick={handleAddRow}
-              className="inline-flex items-center gap-1 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700"
+              className="inline-flex items-center gap-1 rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white hover:bg-green-700"
             >
               + Add row
             </button>

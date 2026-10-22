@@ -79,7 +79,7 @@ export default function TaskEditModal({ task, onSave, onDelete, onClose }: TaskE
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center">
-      <div className="w-full max-w-md rounded-t-2xl bg-white p-6 sm:rounded-2xl">
+      <div className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-t-2xl bg-white p-6 sm:rounded-2xl">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-bold text-slate-900">Edit Task</h2>
           <button onClick={onClose} className="p-2 text-slate-500 hover:text-slate-700">
@@ -96,11 +96,11 @@ export default function TaskEditModal({ task, onSave, onDelete, onClose }: TaskE
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base sm:text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm font-medium text-slate-700">Start</label>
               <input
@@ -108,7 +108,7 @@ export default function TaskEditModal({ task, onSave, onDelete, onClose }: TaskE
                 required
                 value={start}
                 onChange={(e) => setStart(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base sm:text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
               />
             </div>
             <div>
@@ -118,7 +118,7 @@ export default function TaskEditModal({ task, onSave, onDelete, onClose }: TaskE
                 required
                 value={finish}
                 onChange={(e) => setFinish(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base sm:text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
               />
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function TaskEditModal({ task, onSave, onDelete, onClose }: TaskE
               required
               value={percent}
               onChange={(e) => setPercent(Number(e.target.value))}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base sm:text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
             />
           </div>
 
@@ -146,7 +146,7 @@ export default function TaskEditModal({ task, onSave, onDelete, onClose }: TaskE
                   aria-label={`Select color ${c}`}
                   title={c}
                   onClick={() => setColor(c)}
-                  className={`h-8 w-8 rounded-full border border-slate-200 transition-transform hover:scale-110 ${
+                    className={`h-11 w-11 rounded-full border border-slate-200 transition-transform hover:scale-110 ${
                     color === c ? 'ring-2 ring-offset-2 ring-green-600' : ''
                   }`}
                   style={{ backgroundColor: c }}
