@@ -49,7 +49,7 @@ export default function PublicProjectView() {
   };
 
   return (
-    <div className="flex h-full flex-col py-6">
+    <div className="flex h-full min-w-0 flex-col py-6">
       <div className="shrink-0">
         <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -86,7 +86,7 @@ export default function PublicProjectView() {
       </div>
       </div>
 
-      <div className="min-h-0 flex-1">
+      <div className="min-h-0 min-w-0 flex-1">
         <TimelineView
           tasks={project.data.tasks}
           rowLabels={project.data.row_labels || {}}

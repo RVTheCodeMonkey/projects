@@ -25,7 +25,7 @@ function App() {
   return (
     <div className="flex min-h-screen flex-col bg-white">
       {user && <Navbar />}
-      <main className="min-h-0 flex-1 px-4 sm:px-6 lg:px-8">
+      <main className="min-h-0 min-w-0 flex-1 px-4 sm:px-6 lg:px-8">
         <Routes>
           <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
           <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} />

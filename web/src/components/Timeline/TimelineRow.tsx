@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Task } from '../../pages/ProjectView';
 import { TaskCard } from './TaskCard';
-import { DAY_LABEL_WIDTH, ROW_BASE_HEIGHT, TASK_LEVEL_OFFSET } from './constants';
+import { ROW_BASE_HEIGHT, TASK_LEVEL_OFFSET } from './constants';
 
 function isToday(d: Date) {
   const now = new Date();
@@ -26,13 +26,25 @@ interface TimelineRowProps {
   tasks: Task[];
   dayHeaders: Date[];
   weekStarts: Set<number>;
+  dayWidth: number;
+  labelClass: string;
   onTaskClick: (task: Task) => void;
   onAddTask?: () => void;
   onRenameRow?: (newName: string) => void;
 }
 
-export function TimelineRow({ label, tasks, dayHeaders, weekStarts, onTaskClick, onAddTask, onRenameRow }: TimelineRowProps) {
-  const totalWidth = dayHeaders.length * DAY_LABEL_WIDTH;
+export function TimelineRow({
+  label,
+  tasks,
+  dayHeaders,
+  weekStarts,
+  dayWidth,
+  labelClass,
+  onTaskClick,
+  onAddTask,
+  onRenameRow,
+}: TimelineRowProps) {
+  const totalWidth = dayHeaders.length * dayWidth;
 
   const taskLevel = new Map<string, number>();
   if (tasks.length > 0 && dayHeaders.length > 0) {
@@ -102,7 +114,7 @@ export function TimelineRow({ label, tasks, dayHeaders, weekStarts, onTaskClick,
 
   return (
     <div className="flex border-b border-slate-200">
-      <div className="sticky left-0 z-10 flex w-56 shrink-0 items-center justify-between bg-slate-100 px-3 py-2">
+      <div className={`sticky left-0 z-10 flex ${labelClass} shrink-0 items-center justify-between bg-slate-100 px-2 py-2 sm:px-3`}>
         {isEditingName ? (
             <input
             autoFocus
@@ -113,7 +125,7 @@ export function TimelineRow({ label, tasks, dayHeaders, weekStarts, onTaskClick,
             className="min-w-0 flex-1 rounded border border-slate-300 px-1.5 py-1 text-base sm:text-sm focus:border-green-600 focus:outline-none"
           />
         ) : (
-          <span className="truncate text-sm font-semibold text-slate-700">{label}</span>
+          <span className="truncate text-xs font-semibold text-slate-700 sm:text-sm">{label}</span>
         )}
         <div className="flex shrink-0 items-center">
             {canRename && !isEditingName && (
@@ -156,7 +168,7 @@ export function TimelineRow({ label, tasks, dayHeaders, weekStarts, onTaskClick,
                     ? 'border-l border-l-slate-400'
                     : 'border-l border-l-slate-200'
             } ${i === dayHeaders.length - 1 ? 'border-r border-r-slate-200' : ''}`}
-            style={{ left: i * DAY_LABEL_WIDTH, width: DAY_LABEL_WIDTH }}
+            style={{ left: i * dayWidth, width: dayWidth }}
           />
         ))}
 
@@ -173,6 +185,7 @@ export function TimelineRow({ label, tasks, dayHeaders, weekStarts, onTaskClick,
                 key={task.uid}
                 task={task}
                 dayHeaders={dayHeaders}
+                dayWidth={dayWidth}
                 topOffset={taskLevel.get(task.uid)! * TASK_LEVEL_OFFSET}
                 onClick={() => onTaskClick(task)}
               />

@@ -41,11 +41,12 @@ function contrastColor(hex: string): string {
 interface TaskCardProps {
   task: Task;
   dayHeaders: Date[];
+  dayWidth?: number;
   topOffset?: number;
   onClick: () => void;
 }
 
-export function TaskCard({ task, dayHeaders, topOffset = 0, onClick }: TaskCardProps) {
+export function TaskCard({ task, dayHeaders, dayWidth = DAY_LABEL_WIDTH, topOffset = 0, onClick }: TaskCardProps) {
   const [hover, setHover] = useState(false);
 
   const startIdx = dayIndex(task.start, dayHeaders);
@@ -70,8 +71,8 @@ export function TaskCard({ task, dayHeaders, topOffset = 0, onClick }: TaskCardP
   const end = afterGrid ? dayHeaders.length - 1 : Math.max(endIdx, startIdx);
   const span = end - start + 1;
 
-  const left = start * DAY_LABEL_WIDTH + 4;
-  const width = Math.max(span * DAY_LABEL_WIDTH - 8, 80);
+  const left = start * dayWidth + 4;
+  const width = Math.max(span * dayWidth - 8, 80);
 
   const barColor = task.color || fallbackColor(task);
   const textColorClass = contrastColor(barColor);

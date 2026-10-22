@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef, useMemo, useState } from 'react';
 import type { Task } from '../../pages/ProjectView';
 import { TimelineRow } from './TimelineRow';
 import { useDragScroll } from '../../hooks/useDragScroll';
@@ -51,6 +51,20 @@ function getWeekNumber(d: Date) {
   return Math.ceil((((copy.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
 }
 
+function getResponsiveDayWidth() {
+  if (typeof window === 'undefined') return DAY_LABEL_WIDTH;
+  const w = window.innerWidth;
+  if (w < 640) return 40;
+  if (w < 1024) return 56;
+  return DAY_LABEL_WIDTH;
+}
+
+function getLabelClass(dayWidth: number) {
+  if (dayWidth <= 40) return 'w-32';
+  if (dayWidth <= 56) return 'w-44';
+  return 'w-56';
+}
+
 export interface TimelineViewProps {
   tasks: Task[];
   rowLabels?: Record<string, string>;
@@ -63,6 +77,14 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
   const scrollRef = useRef<HTMLDivElement>(null);
   const isDragging = useDragScroll(scrollRef);
   const hasScrolledToToday = useRef(false);
+  const [dayWidth, setDayWidth] = useState(getResponsiveDayWidth);
+  const labelClass = useMemo(() => getLabelClass(dayWidth), [dayWidth]);
+
+  useEffect(() => {
+    const handleResize = () => setDayWidth(getResponsiveDayWidth());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const { dayHeaders, rows, totalWidth, weekStarts } = useMemo(() => {
     if (tasks.length === 0) {
@@ -116,8 +138,8 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
 
     const rows = keyOrder.map((key) => groupMap.get(key)!);
 
-    return { dayHeaders: headers, rows, totalWidth: dayCount * DAY_LABEL_WIDTH, weekStarts };
-  }, [tasks, rowLabels]);
+    return { dayHeaders: headers, rows, totalWidth: dayCount * dayWidth, weekStarts };
+  }, [tasks, rowLabels, dayWidth]);
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -135,12 +157,12 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
 
     requestAnimationFrame(() => {
       const maxScroll = container.scrollWidth - container.clientWidth;
-      let target = idx * DAY_LABEL_WIDTH - container.clientWidth / 2 + DAY_LABEL_WIDTH / 2;
+      let target = idx * dayWidth - container.clientWidth / 2 + dayWidth / 2;
       target = Math.max(0, Math.min(target, maxScroll));
       container.scrollLeft = target;
       hasScrolledToToday.current = true;
     });
-  }, [dayHeaders]);
+  }, [dayHeaders, dayWidth]);
 
   if (tasks.length === 0) {
     return (
@@ -166,7 +188,7 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
         <div style={{ width: totalWidth }}>
           {/* Month headers */}
           <div className="sticky top-0 z-20 flex bg-white">
-            <div className="sticky left-0 z-10 w-56 shrink-0 bg-slate-100" />
+            <div className={`sticky left-0 z-10 ${labelClass} shrink-0 bg-slate-100`} />
             <div className="relative flex" style={{ width: totalWidth }}>
               {(() => {
                 let lastMonth = -1;
@@ -177,10 +199,10 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
                   return (
                     <div
                       key={`m-${i}`}
-                      className={`flex shrink-0 items-center justify-center border-b border-slate-300 text-[11px] font-semibold uppercase tracking-wider text-green-600 ${
+                      className={`flex shrink-0 items-center justify-center border-b border-slate-300 text-[10px] font-semibold uppercase tracking-wider text-green-600 sm:text-[11px] ${
                         weekStarts.has(i) ? 'border-l border-slate-400' : ''
                       } ${isWeekend(d) ? 'bg-slate-100' : 'bg-white'}`}
-                      style={{ width: DAY_LABEL_WIDTH, height: 18 }}
+                      style={{ width: dayWidth, height: 18 }}
                     >
                       {showMonth ? monthLabels[d.getMonth()] : ''}
                     </div>
@@ -192,7 +214,7 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
 
           {/* Week number */}
           <div className="sticky top-[18px] z-20 flex bg-white">
-            <div className="sticky left-0 z-10 w-56 shrink-0 bg-slate-100" />
+            <div className={`sticky left-0 z-10 ${labelClass} shrink-0 bg-slate-100`} />
             <div className="flex" style={{ width: totalWidth }}>
               {(() => {
                 let lastWeek = -1;
@@ -203,12 +225,12 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
                   return (
                     <div
                       key={`w-${i}`}
-                      className={`flex shrink-0 items-center justify-center border-b text-xs font-bold ${
+                      className={`flex shrink-0 items-center justify-center border-b text-[10px] font-bold sm:text-xs ${
                         showWeek
                           ? 'border-l border-slate-400 text-slate-700'
                           : 'border-slate-300 text-slate-700'
                       } ${isWeekend(d) ? 'bg-slate-100' : 'bg-white'}`}
-                      style={{ width: DAY_LABEL_WIDTH, height: 16 }}
+                      style={{ width: dayWidth, height: 16 }}
                     >
                       {showWeek ? `W${wn}` : ''}
                     </div>
@@ -220,7 +242,7 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
 
           {/* Day-of-week + day number */}
           <div className="sticky top-[34px] z-20 flex bg-white">
-            <div className="sticky left-0 z-10 w-56 shrink-0 bg-slate-100" />
+            <div className={`sticky left-0 z-10 ${labelClass} shrink-0 bg-slate-100`} />
             <div className="flex" style={{ width: totalWidth }}>
               {dayHeaders.map((d, i) => {
                 const today = isToday(d);
@@ -228,7 +250,7 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
                 return (
                   <div
                     key={`d-${i}`}
-                    className={`flex shrink-0 flex-col items-center justify-center border-b text-[10px] leading-tight ${
+                    className={`flex shrink-0 flex-col items-center justify-center border-b text-[9px] leading-tight sm:text-[10px] ${
                       weekStarts.has(i) ? 'border-l border-slate-400' : ''
                     } ${
                       today
@@ -237,7 +259,7 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
                           ? 'border-b border-slate-200 bg-slate-100 text-slate-500'
                           : 'border-b border-slate-200 text-slate-500'
                     }`}
-                    style={{ width: DAY_LABEL_WIDTH, height: 28 }}
+                    style={{ width: dayWidth, height: 28 }}
                   >
                     <span>{getDayLabel(d)}</span>
                     <span>{d.getDate()}</span>
@@ -256,6 +278,8 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
                 tasks={row.tasks}
                 dayHeaders={dayHeaders}
                 weekStarts={weekStarts}
+                dayWidth={dayWidth}
+                labelClass={labelClass}
                 onTaskClick={onTaskClick}
                 onAddTask={onAddTask ? () => onAddTask(groupKey) : undefined}
                 onRenameRow={onRenameRow ? (newName) => onRenameRow(groupKey, newName) : undefined}
