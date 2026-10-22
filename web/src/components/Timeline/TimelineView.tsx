@@ -179,7 +179,7 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
                       key={`m-${i}`}
                       className={`flex shrink-0 items-center justify-center border-b border-slate-300 text-[11px] font-semibold uppercase tracking-wider text-green-600 ${
                         weekStarts.has(i) ? 'border-l border-slate-400' : ''
-                      }`}
+                      } ${isWeekend(d) ? 'bg-slate-100' : 'bg-white'}`}
                       style={{ width: DAY_LABEL_WIDTH, height: 18 }}
                     >
                       {showMonth ? monthLabels[d.getMonth()] : ''}
@@ -207,7 +207,7 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
                         showWeek
                           ? 'border-l border-slate-400 text-slate-700'
                           : 'border-slate-300 text-slate-700'
-                      }`}
+                      } ${isWeekend(d) ? 'bg-slate-100' : 'bg-white'}`}
                       style={{ width: DAY_LABEL_WIDTH, height: 16 }}
                     >
                       {showWeek ? `W${wn}` : ''}
@@ -234,7 +234,7 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
                       today
                         ? 'border-b-4 border-b-green-600 bg-green-100 font-bold text-green-800'
                         : weekend
-                          ? 'border-b border-slate-200 bg-slate-50 text-slate-400'
+                          ? 'border-b border-slate-200 bg-slate-100 text-slate-500'
                           : 'border-b border-slate-200 text-slate-500'
                     }`}
                     style={{ width: DAY_LABEL_WIDTH, height: 28 }}

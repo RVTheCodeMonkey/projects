@@ -151,7 +151,7 @@ export function TimelineRow({ label, tasks, dayHeaders, weekStarts, onTaskClick,
               isToday(d)
                 ? 'border-l-4 border-l-green-600'
                 : isWeekend(d)
-                  ? 'border-l border-l-slate-100'
+                  ? 'border-l border-l-slate-200 bg-slate-100'
                   : weekStarts.has(i)
                     ? 'border-l border-l-slate-400'
                     : 'border-l border-l-slate-200'
