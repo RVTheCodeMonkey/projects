@@ -45,6 +45,8 @@ export default function TaskEditModal({ task, onSave, onDelete, onClose }: TaskE
   const [finish, setFinish] = useState('');
   const [percent, setPercent] = useState(0);
   const [color, setColor] = useState('');
+  const [isMilestone, setIsMilestone] = useState(false);
+  const [isCritical, setIsCritical] = useState(false);
 
   useEffect(() => {
     if (task) {
@@ -53,6 +55,8 @@ export default function TaskEditModal({ task, onSave, onDelete, onClose }: TaskE
       setFinish(toDatetimeLocal(task.finish));
       setPercent(task.percent_complete);
       setColor(task.color || defaultColor(task));
+      setIsMilestone(task.milestone);
+      setIsCritical(task.critical);
     }
   }, [task]);
 
@@ -67,6 +71,8 @@ export default function TaskEditModal({ task, onSave, onDelete, onClose }: TaskE
       finish: fromDatetimeLocal(finish),
       percent_complete: percent,
       color,
+      milestone: isMilestone,
+      critical: isCritical,
     });
   };
 
@@ -134,6 +140,27 @@ export default function TaskEditModal({ task, onSave, onDelete, onClose }: TaskE
               onChange={(e) => setPercent(Number(e.target.value))}
               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base sm:text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
             />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-6">
+            <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+              <input
+                type="checkbox"
+                checked={isMilestone}
+                onChange={(e) => setIsMilestone(e.target.checked)}
+                className="h-5 w-5 rounded border-slate-300 text-green-600 focus:ring-green-600"
+              />
+              Milestone
+            </label>
+            <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+              <input
+                type="checkbox"
+                checked={isCritical}
+                onChange={(e) => setIsCritical(e.target.checked)}
+                className="h-5 w-5 rounded border-slate-300 text-green-600 focus:ring-green-600"
+              />
+              Critical
+            </label>
           </div>
 
           <div>

@@ -108,6 +108,47 @@ export function TaskCard({ task, dayHeaders, dayWidth = DAY_LABEL_WIDTH, topOffs
     );
   }
 
+  if (task.milestone) {
+    const size = dayWidth < 56 ? 12 : 16;
+    const diamondLeft = start * dayWidth + (dayWidth - size) / 2;
+    const diamondTop = TASK_CARD_TOP_PADDING + topOffset + (TASK_CARD_MIN_HEIGHT - size) / 2;
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className="absolute flex items-center justify-center rounded-full hover:bg-black/5"
+        style={{
+          left: diamondLeft,
+          top: diamondTop,
+          width: size,
+          height: size,
+        }}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        title={`${task.name} — ${formatLabel(task.start)}${task.start !== task.finish ? ` – ${formatLabel(task.finish)}` : ''}`}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width={size}
+          height={size}
+          className="drop-shadow-sm"
+        >
+          <polygon
+            points="12,2 22,12 12,22 2,12"
+            fill={barColor}
+            stroke="rgba(0,0,0,0.2)"
+            strokeWidth="1"
+          />
+        </svg>
+        {hover && (
+          <div className="absolute left-full z-30 ml-1.5 whitespace-nowrap rounded-md bg-slate-800 px-2.5 py-1.5 text-xs text-white shadow-lg">
+            {task.name} — {task.percent_complete}%
+          </div>
+        )}
+      </button>
+    );
+  }
+
   return (
     <button
       onClick={onClick}

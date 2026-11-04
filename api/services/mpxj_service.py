@@ -202,7 +202,16 @@ def merge_edited_data(parsed: dict, edited_data: dict | None) -> dict:
             continue
         merged_task = dict(task)
         if uid in edited:
-            for field in ("name", "start", "finish", "percent_complete", "color"):
+            for field in (
+                "name",
+                "start",
+                "finish",
+                "percent_complete",
+                "color",
+                "milestone",
+                "summary",
+                "critical",
+            ):
                 if field in edited[uid]:
                     merged_task[field] = edited[uid][field]
         result_tasks.append(merged_task)

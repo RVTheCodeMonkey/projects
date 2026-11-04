@@ -151,10 +151,13 @@ def write_export(
             _set_child(task_el, "OutlineLevel", int(outline_level))
             outline_number = edit.get("outline_number") or edit.get("OutlineNumber") or str(max_id)
             _set_child(task_el, "OutlineNumber", outline_number)
-            milestone = bool(edit.get("milestone") or edit.get("Milestone"))
-            summary = bool(edit.get("summary") or edit.get("Summary"))
-            _set_child(task_el, "Milestone", 1 if milestone else 0)
-            _set_child(task_el, "Summary", 1 if summary else 0)
+
+        milestone = bool(edit.get("milestone") or edit.get("Milestone"))
+        summary = bool(edit.get("summary") or edit.get("Summary"))
+        critical = bool(edit.get("critical") or edit.get("Critical"))
+        _set_child(task_el, "Milestone", 1 if milestone else 0)
+        _set_child(task_el, "Summary", 1 if summary else 0)
+        _set_child(task_el, "Critical", 1 if critical else 0)
 
         name = edit.get("name")
         start = _to_iso_datetime(edit.get("start"))

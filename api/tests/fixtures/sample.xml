@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Project xmlns="http://schemas.microsoft.com/project">
+  <Name>Sample Test Project</Name>
+  <ScheduleFromStart>1</ScheduleFromStart>
+  <StartDate>2026-01-06T08:00:00</StartDate>
+  <FinishDate>2026-01-10T17:00:00</FinishDate>
+  <Tasks>
+    <Task>
+      <UID>0</UID>
+      <ID>0</ID>
+      <Name>Sample Test Project</Name>
+      <OutlineLevel>0</OutlineLevel>
+      <OutlineNumber>0</OutlineNumber>
+      <Start>2026-01-06T08:00:00</Start>
+      <Finish>2026-01-10T17:00:00</Finish>
+      <Duration>PT40H0M0S</Duration>
+      <ManualStart>2026-01-06T08:00:00</ManualStart>
+      <ManualFinish>2026-01-10T17:00:00</ManualFinish>
+      <PercentComplete>0</PercentComplete>
+      <PercentWorkComplete>0</PercentWorkComplete>
+      <Milestone>0</Milestone>
+      <Summary>1</Summary>
+      <Critical>0</Critical>
+    </Task>
+    <Task>
+      <UID>1</UID>
+      <ID>1</ID>
+      <Name>Normal task</Name>
+      <OutlineLevel>1</OutlineLevel>
+      <OutlineNumber>1</OutlineNumber>
+      <Start>2026-01-06T08:00:00</Start>
+      <Finish>2026-01-07T17:00:00</Finish>
+      <Duration>PT9H0M0S</Duration>
+      <ManualStart>2026-01-06T08:00:00</ManualStart>
+      <ManualFinish>2026-01-07T17:00:00</ManualFinish>
+      <PercentComplete>25</PercentComplete>
+      <PercentWorkComplete>25</PercentWorkComplete>
+      <Milestone>0</Milestone>
+      <Summary>0</Summary>
+      <Critical>0</Critical>
+    </Task>
+    <Task>
+      <UID>2</UID>
+      <ID>2</ID>
+      <Name>Milestone task</Name>
+      <OutlineLevel>1</OutlineLevel>
+      <OutlineNumber>2</OutlineNumber>
+      <Start>2026-01-08T08:00:00</Start>
+      <Finish>2026-01-08T17:00:00</Finish>
+      <Duration>PT0H0M0S</Duration>
+      <ManualStart>2026-01-08T08:00:00</ManualStart>
+      <ManualFinish>2026-01-08T17:00:00</ManualFinish>
+      <PercentComplete>0</PercentComplete>
+      <PercentWorkComplete>0</PercentWorkComplete>
+      <Milestone>1</Milestone>
+      <Summary>0</Summary>
+      <Critical>0</Critical>
+    </Task>
+    <Task>
+      <UID>3</UID>
+      <ID>3</ID>
+      <Name>Summary group</Name>
+      <OutlineLevel>1</OutlineLevel>
+      <OutlineNumber>3</OutlineNumber>
+      <Start>2026-01-06T08:00:00</Start>
+      <Finish>2026-01-10T17:00:00</Finish>
+      <Duration>PT40H0M0S</Duration>
+      <ManualStart>2026-01-06T08:00:00</ManualStart>
+      <ManualFinish>2026-01-10T17:00:00</ManualFinish>
+      <PercentComplete>0</PercentComplete>
+      <PercentWorkComplete>0</PercentWorkComplete>
+      <Milestone>0</Milestone>
+      <Summary>1</Summary>
+      <Critical>0</Critical>
+    </Task>
+    <Task>
+      <UID>4</UID>
+      <ID>4</ID>
+      <Name>Critical task</Name>
+      <OutlineLevel>2</OutlineLevel>
+      <OutlineNumber>3.1</OutlineNumber>
+      <Start>2026-01-09T08:00:00</Start>
+      <Finish>2026-01-10T17:00:00</Finish>
+      <Duration>PT9H0M0S</Duration>
+      <ManualStart>2026-01-09T08:00:00</ManualStart>
+      <ManualFinish>2026-01-10T17:00:00</ManualFinish>
+      <PercentComplete>0</PercentComplete>
+      <PercentWorkComplete>0</PercentWorkComplete>
+      <Milestone>0</Milestone>
+      <Summary>0</Summary>
+      <Critical>1</Critical>
+    </Task>
+  </Tasks>
+  <Resources/>
+  <Assignments/>
+</Project>

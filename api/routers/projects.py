@@ -9,7 +9,7 @@ import uuid
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status, UploadFile, File, Request
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import exists, or_
 from sqlalchemy.orm import Session
 
@@ -37,6 +37,8 @@ ALLOWED_EXTENSIONS = {".mpp", ".mpt", ".mpx", ".xml"}
 
 
 class TaskExportItem(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
     uid: str
     name: str
     start: str
@@ -49,6 +51,7 @@ class TaskExportItem(BaseModel):
     outline_number: Optional[str] = None
     milestone: bool = False
     summary: bool = False
+    critical: bool = False
 
 
 class ExportRequest(BaseModel):
@@ -109,7 +112,16 @@ def _compute_edited_data(
             continue
 
         changes: Dict[str, Any] = {}
-        for field in ("name", "start", "finish", "percent_complete", "color"):
+        for field in (
+            "name",
+            "start",
+            "finish",
+            "percent_complete",
+            "color",
+            "milestone",
+            "summary",
+            "critical",
+        ):
             if task.get(field) != baseline.get(field):
                 changes[field] = task.get(field)
         if changes:
