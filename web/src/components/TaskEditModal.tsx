@@ -47,6 +47,7 @@ export default function TaskEditModal({ task, onSave, onDelete, onClose }: TaskE
   const [color, setColor] = useState('');
   const [isMilestone, setIsMilestone] = useState(false);
   const [isCritical, setIsCritical] = useState(false);
+  const [ownerName, setOwnerName] = useState('');
 
   useEffect(() => {
     if (task) {
@@ -57,6 +58,7 @@ export default function TaskEditModal({ task, onSave, onDelete, onClose }: TaskE
       setColor(task.color || defaultColor(task));
       setIsMilestone(task.milestone);
       setIsCritical(task.critical);
+      setOwnerName(task.owner_name || '');
     }
   }, [task]);
 
@@ -73,6 +75,7 @@ export default function TaskEditModal({ task, onSave, onDelete, onClose }: TaskE
       color,
       milestone: isMilestone,
       critical: isCritical,
+      owner_name: ownerName.trim() || null,
     });
   };
 
@@ -161,6 +164,17 @@ export default function TaskEditModal({ task, onSave, onDelete, onClose }: TaskE
               />
               Critical
             </label>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700">Owner</label>
+            <input
+              type="text"
+              value={ownerName}
+              onChange={(e) => setOwnerName(e.target.value)}
+              placeholder="e.g. John Doe"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base sm:text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
+            />
           </div>
 
           <div>

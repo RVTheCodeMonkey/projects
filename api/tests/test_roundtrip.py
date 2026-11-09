@@ -26,8 +26,9 @@ def test_roundtrip_preserves_edits_and_flags(fixtures_dir: Path):
                 "name": "Renamed normal task",
                 "percent_complete": 75,
                 "critical": True,
+                "owner_name": "John Doe",
             },
-            "2": {"milestone": False},
+            "2": {"milestone": False, "owner_name": "Jane Smith"},
             "4": {"critical": False},
         },
         "created": [],
@@ -54,8 +55,10 @@ def test_roundtrip_preserves_edits_and_flags(fixtures_dir: Path):
     assert rt_by_uid["1"]["name"] == "Renamed normal task"
     assert rt_by_uid["1"]["percent_complete"] == 75
     assert rt_by_uid["1"]["critical"] is True
+    assert rt_by_uid["1"]["owner_name"] == "John Doe"
 
     assert rt_by_uid["2"]["milestone"] is False
+    assert rt_by_uid["2"]["owner_name"] == "Jane Smith"
     assert rt_by_uid["3"]["summary"] is True
     assert rt_by_uid["4"]["critical"] is False
 

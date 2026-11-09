@@ -52,6 +52,7 @@ class TaskExportItem(BaseModel):
     milestone: bool = False
     summary: bool = False
     critical: bool = False
+    owner_name: Optional[str] = None
 
 
 class ExportRequest(BaseModel):
@@ -121,6 +122,7 @@ def _compute_edited_data(
             "milestone",
             "summary",
             "critical",
+            "owner_name",
         ):
             if task.get(field) != baseline.get(field):
                 changes[field] = task.get(field)

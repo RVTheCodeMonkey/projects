@@ -175,6 +175,20 @@ def parse_project_file(input_path: str) -> Dict[str, Any]:
             if outline_number:
                 row_labels[str(outline_number)] = rl.text or ""
 
+    task_owners: Dict[str, str] = {}
+    task_owners_el = project.find("m:TaskOwners", NSMAP)
+    if task_owners_el is not None:
+        for to in task_owners_el.findall("m:TaskOwner", NSMAP):
+            task_uid = to.get("TaskUID")
+            owner_name = to.get("OwnerName")
+            if task_uid and owner_name:
+                task_owners[str(task_uid)] = owner_name
+
+    for task in tasks:
+        uid = str(task.get("uid"))
+        if uid and uid in task_owners:
+            task["owner_name"] = task_owners[uid]
+
     return {
         "name": name,
         "start_date": start_date,
@@ -211,6 +225,7 @@ def merge_edited_data(parsed: dict, edited_data: dict | None) -> dict:
                 "milestone",
                 "summary",
                 "critical",
+                "owner_name",
             ):
                 if field in edited[uid]:
                     merged_task[field] = edited[uid][field]

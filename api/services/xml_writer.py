@@ -207,6 +207,22 @@ def write_export(
             rl.set("OutlineNumber", str(outline_number))
             rl.text = label
 
+    # Persist task owner names inside the XML so they survive export/import.
+    existing_task_owners = project.find(f"{{{MSPdi_NAMESPACE}}}TaskOwners")
+    if existing_task_owners is not None:
+        project.remove(existing_task_owners)
+    task_owner_entries = {
+        str(t.get("uid")): t.get("owner_name")
+        for t in tasks
+        if t.get("uid") and t.get("owner_name")
+    }
+    if task_owner_entries:
+        to_el = etree.SubElement(project, f"{{{MSPdi_NAMESPACE}}}TaskOwners")
+        for task_uid, owner_name in task_owner_entries.items():
+            to = etree.SubElement(to_el, f"{{{MSPdi_NAMESPACE}}}TaskOwner")
+            to.set("TaskUID", str(task_uid))
+            to.set("OwnerName", str(owner_name))
+
     tree.write(output_path, xml_declaration=True, encoding="UTF-8", standalone=True)
 
     if suffix != ".xml" and tmp_xml.exists():

@@ -17,6 +17,7 @@ export interface Task {
   milestone: boolean;
   summary: boolean;
   critical: boolean;
+  owner_name?: string | null;
   color?: string;
 }
 

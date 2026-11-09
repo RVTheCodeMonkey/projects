@@ -99,9 +99,14 @@ export function TaskCard({ task, dayHeaders, dayWidth = DAY_LABEL_WIDTH, topOffs
         <span className="absolute right-1.5 top-1.5 rounded bg-black/40 px-1 text-[10px] text-white">
           {task.percent_complete}%
         </span>
+        {task.owner_name && (
+          <span className="absolute bottom-1.5 left-1.5 max-w-[80%] truncate rounded bg-black/40 px-1 text-[10px] text-white">
+            {task.owner_name}
+          </span>
+        )}
         {hover && (
           <div className="absolute left-full z-30 ml-1.5 whitespace-nowrap rounded-md bg-slate-800 px-2.5 py-1.5 text-xs text-white shadow-lg">
-            {task.name} — {task.percent_complete}%
+            {task.name}{task.owner_name ? ` — ${task.owner_name}` : ''} — {task.percent_complete}%
           </div>
         )}
       </div>
@@ -125,7 +130,7 @@ export function TaskCard({ task, dayHeaders, dayWidth = DAY_LABEL_WIDTH, topOffs
         }}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
-        title={`${task.name} — ${formatLabel(task.start)}${task.start !== task.finish ? ` – ${formatLabel(task.finish)}` : ''}`}
+        title={`${task.name}${task.owner_name ? ` — ${task.owner_name}` : ''} — ${formatLabel(task.start)}${task.start !== task.finish ? ` – ${formatLabel(task.finish)}` : ''}`}
       >
         <svg
           viewBox="0 0 24 24"
@@ -142,7 +147,7 @@ export function TaskCard({ task, dayHeaders, dayWidth = DAY_LABEL_WIDTH, topOffs
         </svg>
         {hover && (
           <div className="absolute left-full z-30 ml-1.5 whitespace-nowrap rounded-md bg-slate-800 px-2.5 py-1.5 text-xs text-white shadow-lg">
-            {task.name} — {task.percent_complete}%
+            {task.name}{task.owner_name ? ` — ${task.owner_name}` : ''} — {task.percent_complete}%
           </div>
         )}
       </button>
@@ -181,9 +186,14 @@ export function TaskCard({ task, dayHeaders, dayWidth = DAY_LABEL_WIDTH, topOffs
           style={{ width: `${task.percent_complete}%` }}
         />
       </div>
+      {task.owner_name && (
+        <span className="absolute bottom-1.5 left-1.5 max-w-[80%] truncate rounded bg-black/40 px-1 text-[10px] text-white">
+          {task.owner_name}
+        </span>
+      )}
       {hover && (
         <div className="absolute left-full z-30 ml-1.5 whitespace-nowrap rounded-md bg-slate-800 px-2.5 py-1.5 text-xs text-white shadow-lg">
-          {task.name} — {task.percent_complete}%
+          {task.name}{task.owner_name ? ` — ${task.owner_name}` : ''} — {task.percent_complete}%
         </div>
       )}
     </button>
