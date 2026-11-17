@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../api';
 import TaskEditModal from '../components/TaskEditModal';
 import { TimelineView } from '../components/Timeline/TimelineView';
@@ -49,6 +49,7 @@ interface ProjectData {
 
 export default function ProjectView() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [project, setProject] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -197,6 +198,19 @@ export default function ProjectView() {
     } finally {
       setUploadingVersion(false);
       if (versionInputRef.current) versionInputRef.current.value = '';
+    }
+  };
+
+  const handleDeleteProject = async () => {
+    if (!project || !isOwner) return;
+    if (!window.confirm(`Delete project "${project.name}"? This cannot be undone.`)) {
+      return;
+    }
+    try {
+      await api.delete(`/projects/${project.id}`);
+      navigate('/');
+    } catch (err) {
+      alert('Failed to delete project');
     }
   };
 
@@ -376,6 +390,14 @@ export default function ProjectView() {
               className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {exporting ? 'Exporting...' : 'Export XML'}
+            </button>
+          )}
+          {isOwner && (
+            <button
+              onClick={handleDeleteProject}
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100"
+            >
+              Delete project
             </button>
           )}
         </div>

@@ -194,9 +194,7 @@ export default function Dashboard() {
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Size</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Role</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Uploaded</th>
-                {user?.is_admin && view === 'all' && (
-                  <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
-                )}
+                <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -229,16 +227,16 @@ export default function Dashboard() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                     {new Date(project.created_at).toLocaleString()}
                   </td>
-                  {user?.is_admin && view === 'all' && (
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                  <td className="px-6 py-4 whitespace-nowrap text-right">
+                    {project.role === 'owner' && (
                       <button
                         onClick={() => handleDelete(project)}
                         className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-100"
                       >
                         Delete
                       </button>
-                    </td>
-                  )}
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
