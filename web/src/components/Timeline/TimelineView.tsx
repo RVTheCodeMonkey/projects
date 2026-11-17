@@ -87,12 +87,21 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
   }, []);
 
   const { dayHeaders, rows, totalWidth, weekStarts } = useMemo(() => {
-    if (tasks.length === 0) {
+    const validTasks = tasks.filter(
+      (t) => t.outline_number && t.start && t.finish
+    );
+    if (validTasks.length === 0) {
       return { dayHeaders: [], rows: [], totalWidth: 0, weekStarts: new Set<number>() };
     }
 
-    let min = parseDate(tasks[0].start);
-    let max = parseDate(tasks[0].finish);
+    let min = parseDate(validTasks[0].start);
+    let max = parseDate(validTasks[0].finish);
+    for (const t of validTasks) {
+      const s = parseDate(t.start);
+      const f = parseDate(t.finish);
+      if (s < min) min = s;
+      if (f > max) max = f;
+    }
     for (const t of tasks) {
       const s = parseDate(t.start);
       const f = parseDate(t.finish);
@@ -118,7 +127,7 @@ export function TimelineView({ tasks, rowLabels = {}, onTaskClick, onAddTask, on
     // Group by top-level outline number (WBS first segment)
     const groupMap = new Map<string, { label: string; tasks: Task[] }>();
     const keyOrder: string[] = [];
-    for (const t of tasks) {
+    for (const t of validTasks) {
       const key = t.outline_number.split('.')[0];
       if (!groupMap.has(key)) {
         groupMap.set(key, { label: key, tasks: [] });

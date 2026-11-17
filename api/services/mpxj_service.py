@@ -109,14 +109,21 @@ def parse_project_file(input_path: str) -> Dict[str, Any]:
     tasks_el = project.find("m:Tasks", NSMAP)
     if tasks_el is not None:
         for task in tasks_el.findall("m:Task", NSMAP):
+            name = _child_text(task, "Name")
+            outline_number = _child_text(task, "OutlineNumber")
+            start = _child_text(task, "Start")
+            finish = _child_text(task, "Finish")
+            # Skip ghost/placeholder rows that have no usable metadata.
+            if not name or not outline_number or not start or not finish:
+                continue
             tasks.append({
                 "uid": _child_text(task, "UID"),
                 "id": _child_text(task, "ID"),
-                "name": _child_text(task, "Name"),
+                "name": name,
                 "outline_level": int(_child_text(task, "OutlineLevel", "0")),
-                "outline_number": _child_text(task, "OutlineNumber"),
-                "start": _child_text(task, "Start"),
-                "finish": _child_text(task, "Finish"),
+                "outline_number": outline_number,
+                "start": start,
+                "finish": finish,
                 "duration": _parse_duration(_child_text(task, "Duration")),
                 "percent_complete": int(_child_text(task, "PercentComplete", "0")),
                 "manual_start": _child_text(task, "ManualStart"),
